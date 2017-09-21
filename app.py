@@ -8,7 +8,10 @@ import soundscrape
 
 pp = pprint.PrettyPrinter(indent=4)
 
+<<<<<<< HEAD
 # initial links from stereogum's /music page
+=======
+>>>>>>> 805af93db8db8c3c974eaa9fd8686178806cc694
 url = 'https://www.stereogum.com/music/'
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
