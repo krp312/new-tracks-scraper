@@ -1,4 +1,5 @@
-sometest = [5]
+import subprocess
 
-if sometest:
-    print('pass')
+link = 'emily haines'
+
+subprocess.call(["youtube-dl", "-f", "bestaudio[ext=m4a]", f"ytsearch:{link}"])
