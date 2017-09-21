@@ -8,22 +8,24 @@ import soundscrape
 
 pp = pprint.PrettyPrinter(indent=4)
 
-<<<<<<< HEAD
 # initial links from stereogum's /music page
-=======
->>>>>>> 805af93db8db8c3c974eaa9fd8686178806cc694
 url = 'https://www.stereogum.com/music/'
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
 links = soup.find_all(attrs={"class": "image-holder pull-left"})
 
 initial_links = []
+iframe_addresses = []
+final_download_links = []
+
+# grouping up the first set of links to visit
 for link in links:
     initial_links.append(link.a['href'])
 
-final_download_links = []
-iframe_addresses = []
-
+# visiting the first set of links
+# soundcloud iframe links are gathered in `iframe_addresses`
+#   one more step before their final download links
+# youtube links are placed into `final_download_links`
 for sublink in initial_links:
     sublink_response = requests.get(sublink)
     sublink_soup = BeautifulSoup(sublink_response.content, 'html.parser')
@@ -36,5 +38,11 @@ for sublink in initial_links:
         youtube_link = sublink_soup.find('iframe', src=re.compile('youtube'))
         final_download_links.append(youtube_link['src'])
 
-pp.pprint(final_download_links)
-pp.pprint(iframe_addresses)
+# soundcloud iframe links are visited, and final download links are extracted
+for address in iframe_addresses:
+    address_response = requests.get(address)
+    if address_response.status_code == 404:
+        continue
+    address_soup = BeautifulSoup(address_response.content, 'html.parser')
+    soundcloud = address_soup.find('link', rel="canonical")
+    final_download_links.append(soundcloud['href'])
