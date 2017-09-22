@@ -1,4 +1,4 @@
-"""Is this the right way to do a docstring?"""
+"""This module downloads songs from Stereogum's new music page."""
 
 import subprocess
 import pprint
@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 pp = pprint.PrettyPrinter(indent=4)
 
-# initial links from stereogum's /music page
+# Initial links from Stereogum's /music page
 url = 'https://www.stereogum.com/music/'
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
@@ -18,15 +18,16 @@ initial_links = []
 interim_links = []
 final_download_links = []
 
-# grouping up the first set of links to visit
+# Grouping up the first set of links to visit
 for link in links:
     initial_links.append(link.a['href'])
 
-# visiting the first set of links
-# soundcloud iframe links are gathered in `interim_links`
-# youtube and bandcamp links are placed into `final_download_links`
-# (bandcamp will download the whole album, for now)
-# spotify is just a string that will be passed to youtube-dl
+# Visiting the first set of links
+# SoundCloud iframe links are gathered in `interim_links`
+# YouTube and Bandcamp links are placed into `final_download_links`
+# (Bandcamp will download the whole album, for now)
+# Spotify is just a string that will be passed to youtube-dl
+# which totally can give undesirable results
 for sublink in initial_links:
     sublink_response = requests.get(sublink)
     sublink_soup = BeautifulSoup(sublink_response.content, 'html.parser')
@@ -49,7 +50,7 @@ for sublink in initial_links:
             'a', href=re.compile('bandcamp'))
         final_download_links.append(bandcamp_download_link['href'])
 
-# soundcloud iframe links are visited, and final download links are extracted
+# SoundCloud iframe links are visited, and final download links are extracted
 for interim_link in interim_links:
     interim_link_response = requests.get(interim_link)
     if interim_link_response.status_code == 404:
@@ -59,6 +60,7 @@ for interim_link in interim_links:
     soundcloud = interim_link_soup.find('link', rel="canonical")
     final_download_links.append(soundcloud['href'])
 
+# Downloads are performed
 for link in final_download_links:
     if 'youtube' in link:
         subprocess.call(["youtube-dl", "-f", "bestaudio[ext=m4a]", link])

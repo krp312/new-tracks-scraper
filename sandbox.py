@@ -1,5 +1,5 @@
-import subprocess
+for position, sublink in enumerate(initial_links):
 
-link = 'emily haines'
+print("%d/%d Downloading %s..." % (pos, len(initial_links, sublink))
 
-subprocess.call(["youtube-dl", "-f", "bestaudio[ext=m4a]", f"ytsearch:{link}"])
+print("%d/%d" % (len(initial_links), len(initial_links)))
