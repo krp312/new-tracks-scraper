@@ -5,6 +5,8 @@ import pprint
 import re
 import requests
 from bs4 import BeautifulSoup
+from tqdm import tqdm
+import time
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -19,6 +21,8 @@ interim_links = []
 final_download_links = []
 
 # Grouping up the first set of links to visit
+print('\U0001f570  Visiting initial links')
+time.sleep(1)
 for link in links:
     initial_links.append(link.a['href'])
 
@@ -28,7 +32,8 @@ for link in links:
 # (Bandcamp will download the whole album, for now)
 # Spotify is just a string that will be passed to youtube-dl
 # which totally can give undesirable results
-for sublink in initial_links:
+print('\U0001f570  Finding audio sources')
+for sublink in tqdm(initial_links):
     sublink_response = requests.get(sublink)
     sublink_soup = BeautifulSoup(sublink_response.content, 'html.parser')
     if sublink_soup.find('iframe', src=re.compile('soundcloud')):
@@ -51,7 +56,8 @@ for sublink in initial_links:
         final_download_links.append(bandcamp_download_link['href'])
 
 # SoundCloud iframe links are visited, and final download links are extracted
-for interim_link in interim_links:
+print('\U0001f570  Handling SoundCloud sources')
+for interim_link in tqdm(interim_links):
     interim_link_response = requests.get(interim_link)
     if interim_link_response.status_code == 404:
         continue
@@ -61,13 +67,17 @@ for interim_link in interim_links:
     final_download_links.append(soundcloud['href'])
 
 # Downloads are performed
-for link in final_download_links:
+print('\U0001f570  Starting downloads')
+for (i, link) in enumerate(final_download_links):
+    print(f"\U0001f570  Downloading {i+1} of {len(final_download_links)} sources")
     if 'youtube' in link:
-        subprocess.call(["youtube-dl", "-f", "bestaudio[ext=m4a]", link])
+        subprocess.call(["youtube-dl", link, "-f", "bestaudio[ext=m4a]", "-o", "./downloads/%(title)s-%(id)s.%(ext)s"])
     elif 'soundcloud' in link:
-        subprocess.call(['soundscrape', link])
+        subprocess.call(['soundscrape', link, '-p', './downloads'])
     elif 'bandcamp' in link:
-        subprocess.call(['soundscrape', '-b', link])
+        subprocess.call(['soundscrape', link, '-b', '-p', './downloads'])
     else:
         subprocess.call(
-            ["youtube-dl", "-f", "bestaudio[ext=m4a]", f"ytsearch:{link}"])
+            ["youtube-dl", "-f", "bestaudio[ext=m4a]", f"ytsearch:{link}", "-o", "./downloads/%(title)s-%(id)s.%(ext)s"])
+    
+print('\U0001f483  Downloads complete!')
