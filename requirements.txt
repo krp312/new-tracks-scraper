@@ -1,3 +1,4 @@
 soundscrape
 youtube-dl
 bs4
+tqdm
