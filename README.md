@@ -24,7 +24,7 @@ A `Downloads` folder will be created in the `stereogum-scraper` folder.
 
 When you see _Downloads complete!_, you're good to go!
 
-## Desired Features
+## Future Features
 
 I'd like to add [Resident Advisor's new tracks](https://www.residentadvisor.net/tracks) next, but if you'd like to give it a shot, feel free to submit a pull request!
 
