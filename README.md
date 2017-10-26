@@ -2,8 +2,6 @@
 
 Hello web traveler! Stereogum Scraper is a simple app that downloads any new music that's on the most recent page at [stereogum.com/music](https://www.stereogum.com/music/). It requires Python 3.6.
 
-## Please Support Emerging Artists
-
 Many of the artists featured at [stereogum.com/music](https://www.stereogum.com/music/) are in the early stages of their careers. If you like what you hear, please support these artists by buying their stuff!
 
 ## Usage
